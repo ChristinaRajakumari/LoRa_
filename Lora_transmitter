@@ -1,0 +1,30 @@
+#include <SPI.h>
+#include <LoRa.h>
+
+// LoRa Module Pin Definitions
+#define LORA_CS 10
+#define LORA_RST 9
+#define LORA_IRQ 2
+
+void setup() {
+    Serial.begin(9600);
+    SPI.begin();
+    LoRa.setPins(LORA_CS, LORA_RST, LORA_IRQ);
+
+    if (!LoRa.begin(433E6)) {
+        Serial.println("⚠ LoRa Initialization Failed!");
+        while (1);
+    }
+    Serial.println("✅ LoRa Receiver Ready!");
+}
+
+void loop() {
+    int packetSize = LoRa.parsePacket();
+    if (packetSize) {
+        Serial.print("📡 Received Packet: ");
+        while (LoRa.available()) {
+            Serial.print((char)LoRa.read());
+        }
+        Serial.println();
+    }
+}
